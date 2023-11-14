@@ -1,0 +1,722 @@
+{
+	"info": {
+		"_postman_id": "764a2385-af22-4f76-8f06-52334877574d",
+		"name": "ECS_PM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Oauth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var contentTypeHeaderExists = responseHeaders.hasOwnProperty(\"Content-Type\");",
+							" ",
+							"//tests[\"Has Content-Type\"] = contentTypeHeaderExists;",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							" ",
+							"if (contentTypeHeaderExists) {",
+							"// tests[\"Content-Type is application/json\"] =",
+							"// responseHeaders[\"Content-Type\"].has(\"application/json\");",
+							" pm.test(\"Content-Type is application/json header\", function() {",
+							"   pm.response.to.have.header(\"Content-Type\", \"application/json\") ; ",
+							" });   ",
+							" ",
+							" }",
+							"",
+							"// tests[\"Response Body has access token\"] = responseBody.has(\"access_token\");",
+							" ",
+							"pm.test(\"Response Body has asscesstoken\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"access_token\");",
+							"});",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"var token = jsonData.access_token;",
+							"",
+							"console.log(\"Access Token: \", token);",
+							"//postman.setGlobalVariable(\"STEHeaderToken\", token);",
+							"pm.environment.set(\"oauthToken\", token);",
+							"",
+							"if (responseCode.code !== 200)",
+							"{",
+							"    console.log(\"Stopping the test as AuthToken request failed.\");",
+							"    postman.setNextRequest(null);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic em41MiFXc19UeTpAN1d5QGNUSVZM",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "Scope",
+							"value": "default",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api-dv.upncntrsvcs.aws.alight.com/api/oauth/token",
+					"protocol": "https",
+					"host": [
+						"api-dv",
+						"upncntrsvcs",
+						"aws",
+						"alight",
+						"com"
+					],
+					"path": [
+						"api",
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Session",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () ",
+							"{",
+							"    pm.response.to.have.status(200);",
+							"}",
+							"    );",
+							"var alightPersonSessionToken = responseHeaders[\"alightPersonSessionToken\"];",
+							"",
+							"",
+							"pm.environment.set(\"alightPersonSessionToken\", alightPersonSessionToken);",
+							"",
+							"if (responseCode.code !== 200)",
+							"{",
+							"    console.log(\"Stopping the test as StartSessionToken request failed.\");",
+							"    postman.setNextRequest(null);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{oauthToken}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "alightRequestHeader",
+						"value": "{\"consumerReferenceId\":\"Kuldeep_Test1\"}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "brokerUserId",
+							"value": "Portal",
+							"type": "text"
+						},
+						{
+							"key": "channelUserProfile",
+							"value": "{\"firstName\":\"Sam\",\"lastName\":\"Wills\",\"fullName\":\"Sam Wills\",\"csso\":\"LOGON\",\"tbaidmapping\":\",,19968_1.0,,234234999:785785785,E A Phd,19968_1.0,,234234999:432143215,A A,19968_1.0,,234234999:\",\"device\":\"Desktop\",\"orgName\":\"hmorg\",\"groupId\":6727607,\"masClntDash\":\"Employer_Portal_Link_Name::::\",\"udpValues\":\"T,\",\"email\":\"sumita.rana393@alight.com\",\"adresln1\":\"34\",\"uceVals\":\"T,\",\"cntryVals\":\"United States,USA\",\"ysaVals\":\"19968_09754_1.0,\",\"dob\":\"01-01-1980\",\"upointURL\":\"https://l8sita09:9711\",\"linkppt\":\"23423499943510000019968\",\"custflds\":\"CORE:19968_portal,CM:19968:19968,DB:19968,DC:19968,HM:19968,DBP:19968,YSA:19968_09754,\",\"clientId\":\"19968\",\"subjectId\":\"234234999\",\"prefix\":\"\",\"adresln2\":\"Tower hlls\",\"suffix\":\"\",\"mddlName\":\"\",\"city\":\"City\",\"state\":\"California\",\"zip\":\"96006\",\"mPptDataHolder\":{\"stateCd\":\"CA\"},\"gender\":\"M\"}",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "clientId",
+							"value": "{{clientId}}",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "idMapping",
+							"value": "[{\"platformType\":\"TBA\",\"clientId\":\"19968\",\"platformExternalId\":\"234234999\",\"platformInternalId\":\"435100000\",\"sourceTestCfg\":\"@#HB\",\"domain\":\"DB,DC,HM,DBP\",\"normalizedClientId\":\"19968\",\"roleType\":\"rkp\"},{\"platformType\":\"TBA\",\"clientId\":\"19968\",\"platformExternalId\":\"234234999\",\"platformInternalId\":\"026100054\",\"sourceTestCfg\":\"@#HB\",\"domain\":\"DB,DC,HM,DBP\",\"normalizedClientId\":\"19968\",\"roleType\":\"bene\"},{\"platformType\":\"TBA\",\"clientId\":\"19968\",\"platformExternalId\":\"234234999\",\"platformInternalId\":\"336100098\",\"sourceTestCfg\":\"@#HB\",\"domain\":\"DB,DC,HM,DBP\",\"normalizedClientId\":\"19968\",\"roleType\":\"qdro\"}]",
+							"type": "text"
+						},
+						{
+							"key": "systemDate",
+							"value": "2018-12-11",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api-dv.upncntrsvcs.aws.alight.com/api/session/startSessionForPerson",
+					"protocol": "https",
+					"host": [
+						"api-dv",
+						"upncntrsvcs",
+						"aws",
+						"alight",
+						"com"
+					],
+					"path": [
+						"api",
+						"session",
+						"startSessionForPerson"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "widgetconfigurations- Get",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authority",
+						"value": "api-int.euw-dev.aws.alight.com",
+						"type": "text"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*",
+						"type": "text"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9",
+						"type": "text"
+					},
+					{
+						"key": "alightpersonsessiontoken",
+						"value": "{{alightPersonSessionToken}}",
+						"type": "text"
+					},
+					{
+						"key": "alightrequestheader",
+						"value": "{\"locale\":\"en_US\",\"roleId\":\"19968_1.0-E:@PPT@\",\"clientId\":\"19968\",\"consumerReferenceId\":\"Kuldeep_ECS_Test12\",\"channelRequestData\":\"URL::login::MAS_CURRENT_REQUESTED_ACTIVE_ACCT_TYPE::TBA::IS_HIDE_PRIMARY_ACCOUNT_IN_MAS_DROP_DOWN::false::tgtSite::::csid::default::gblsId::e1db453c-9bd0-4815-a815-5f7427ed2873_2023-09-06-08.14.11.634000::uxPageRequestId::219d7d85-dfcc-453a-a066-ea9ae307938a::pageName::homepage::deviceType::Desktop::sessionCreatedTimestamp::2023-09-06-08.14.11.634000::widgetName::null::ds::2023-09-06::\"}",
+						"type": "text"
+					},
+					{
+						"key": "cache-control",
+						"value": "no-cache",
+						"type": "text"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "origin",
+						"value": "https://l8sita09:9711",
+						"type": "text"
+					},
+					{
+						"key": "pragma",
+						"value": "no-cache",
+						"type": "text"
+					},
+					{
+						"key": "referer",
+						"value": "https://l8sita09:9711/",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\"",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\"",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "cross-site",
+						"type": "text"
+					},
+					{
+						"key": "swdatakey",
+						"value": "hmorg__19968_1.0-E:@PPT@__en_US__UpointDevNg",
+						"type": "text"
+					},
+					{
+						"key": "swkeytemp",
+						"value": "icData",
+						"type": "text"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"operation\": \"configset\",\n    \"uce\": \"true\",\n    \"linkKeys\": [\n        {\n            \"requestType\": \"link\",\n            \"linkName\": \"SPOUSE_LANDING_PAGE_REDIRECT\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "https://api-dv.upncntrsvcs.aws.alight.com/api/channel/widgetconfigurations/channel/configurationList/get",
+					"protocol": "https",
+					"host": [
+						"api-dv",
+						"upncntrsvcs",
+						"aws",
+						"alight",
+						"com"
+					],
+					"path": [
+						"api",
+						"channel",
+						"widgetconfigurations",
+						"channel",
+						"configurationList",
+						"get"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "widgetconfigurations - initconig",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authority",
+						"value": "api-int.euw-dev.aws.alight.com",
+						"type": "text"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*",
+						"type": "text"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9",
+						"type": "text"
+					},
+					{
+						"key": "alightpersonsessiontoken",
+						"value": "{{alightPersonSessionToken}}",
+						"type": "text"
+					},
+					{
+						"key": "alightrequestheader",
+						"value": "{\"locale\":\"en_US\",\"roleId\":\"19968_1.0-E:@PPT@\",\"clientId\":\"19968\",\"consumerReferenceId\":\"Kuldeep_ECS_Test12\",\"channelRequestData\":\"URL::login::MAS_CURRENT_REQUESTED_ACTIVE_ACCT_TYPE::TBA::IS_HIDE_PRIMARY_ACCOUNT_IN_MAS_DROP_DOWN::false::tgtSite::::csid::default::gblsId::e1db453c-9bd0-4815-a815-5f7427ed2873_2023-09-06-08.14.11.634000::uxPageRequestId::219d7d85-dfcc-453a-a066-ea9ae307938a::pageName::homepage::deviceType::Desktop::sessionCreatedTimestamp::2023-09-06-08.14.11.634000::widgetName::null::ds::2023-09-06::\"}",
+						"type": "text"
+					},
+					{
+						"key": "cache-control",
+						"value": "no-cache",
+						"type": "text"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "origin",
+						"value": "https://l8sita09:9711",
+						"type": "text"
+					},
+					{
+						"key": "pragma",
+						"value": "no-cache",
+						"type": "text"
+					},
+					{
+						"key": "referer",
+						"value": "https://l8sita09:9711/",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\"",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\"",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "cross-site",
+						"type": "text"
+					},
+					{
+						"key": "swdatakey",
+						"value": "hmorg__19968_1.0-E:@PPT@__en_US__UpointDevNg",
+						"type": "text"
+					},
+					{
+						"key": "swkeytemp",
+						"value": "icData",
+						"type": "text"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"operation\": \"configset\",\n    \"uce\": \"true\",\n    \"linkKeys\": [\n        {\n            \"requestType\": \"link\",\n            \"linkName\": \"SPOUSE_LANDING_PAGE_REDIRECT\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "https://api-dv.upncntrsvcs.aws.alight.com/api/channel/widgetconfigurations/channel/widgetConfigurations/initConfig",
+					"protocol": "https",
+					"host": [
+						"api-dv",
+						"upncntrsvcs",
+						"aws",
+						"alight",
+						"com"
+					],
+					"path": [
+						"api",
+						"channel",
+						"widgetconfigurations",
+						"channel",
+						"widgetConfigurations",
+						"initConfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "clientappconfigurations",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authority",
+						"value": "api-int.euw-dev.aws.alight.com",
+						"type": "text"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*",
+						"type": "text"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9",
+						"type": "text"
+					},
+					{
+						"key": "alightpersonsessiontoken",
+						"value": "{{alightPersonSessionToken}}",
+						"type": "text"
+					},
+					{
+						"key": "alightrequestheader",
+						"value": "{\"locale\":\"en_US\",\"roleId\":\"19968_1.0-E:@PPT@\",\"clientId\":\"19968\",\"consumerReferenceId\":\"Kuldeep_ECS_Test12\",\"channelRequestData\":\"URL::login::MAS_CURRENT_REQUESTED_ACTIVE_ACCT_TYPE::TBA::IS_HIDE_PRIMARY_ACCOUNT_IN_MAS_DROP_DOWN::false::tgtSite::::csid::default::gblsId::e1db453c-9bd0-4815-a815-5f7427ed2873_2023-09-06-08.14.11.634000::uxPageRequestId::219d7d85-dfcc-453a-a066-ea9ae307938a::pageName::homepage::deviceType::Desktop::sessionCreatedTimestamp::2023-09-06-08.14.11.634000::widgetName::null::ds::2023-09-06::\"}",
+						"type": "text"
+					},
+					{
+						"key": "cache-control",
+						"value": "no-cache",
+						"type": "text"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "origin",
+						"value": "https://l8sita09:9711",
+						"type": "text"
+					},
+					{
+						"key": "pragma",
+						"value": "no-cache",
+						"type": "text"
+					},
+					{
+						"key": "referer",
+						"value": "https://l8sita09:9711/",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\"",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\"",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "cross-site",
+						"type": "text"
+					},
+					{
+						"key": "swdatakey",
+						"value": "hmorg__19968_1.0-E:@PPT@__en_US__UpointDevNg",
+						"type": "text"
+					},
+					{
+						"key": "swkeytemp",
+						"value": "icData",
+						"type": "text"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"operation\": \"configset\",\n    \"uce\": \"true\",\n    \"linkKeys\": [\n        {\n            \"requestType\": \"link\",\n            \"linkName\": \"SPOUSE_LANDING_PAGE_REDIRECT\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "https://api-dv.upncntrsvcs.aws.alight.com/api/channel/clientappconfigurations/upoint/clientsetup/clientid/19920",
+					"protocol": "https",
+					"host": [
+						"api-dv",
+						"upncntrsvcs",
+						"aws",
+						"alight",
+						"com"
+					],
+					"path": [
+						"api",
+						"channel",
+						"clientappconfigurations",
+						"upoint",
+						"clientsetup",
+						"clientid",
+						"19920"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "template-springboot2",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authority",
+						"value": "api-int.euw-dev.aws.alight.com",
+						"type": "text"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*",
+						"type": "text"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9",
+						"type": "text"
+					},
+					{
+						"key": "alightpersonsessiontoken",
+						"value": "{{alightPersonSessionToken}}",
+						"type": "text"
+					},
+					{
+						"key": "alightrequestheader",
+						"value": "{\"locale\":\"en_US\",\"roleId\":\"19968_1.0-E:@PPT@\",\"clientId\":\"19968\",\"consumerReferenceId\":\"Kuldeep_ECS_Test12\",\"channelRequestData\":\"URL::login::MAS_CURRENT_REQUESTED_ACTIVE_ACCT_TYPE::TBA::IS_HIDE_PRIMARY_ACCOUNT_IN_MAS_DROP_DOWN::false::tgtSite::::csid::default::gblsId::e1db453c-9bd0-4815-a815-5f7427ed2873_2023-09-06-08.14.11.634000::uxPageRequestId::219d7d85-dfcc-453a-a066-ea9ae307938a::pageName::homepage::deviceType::Desktop::sessionCreatedTimestamp::2023-09-06-08.14.11.634000::widgetName::null::ds::2023-09-06::\"}",
+						"type": "text"
+					},
+					{
+						"key": "cache-control",
+						"value": "no-cache",
+						"type": "text"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "origin",
+						"value": "https://l8sita09:9711",
+						"type": "text"
+					},
+					{
+						"key": "pragma",
+						"value": "no-cache",
+						"type": "text"
+					},
+					{
+						"key": "referer",
+						"value": "https://l8sita09:9711/",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\"",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0",
+						"type": "text"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\"",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors",
+						"type": "text"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "cross-site",
+						"type": "text"
+					},
+					{
+						"key": "swdatakey",
+						"value": "hmorg__19968_1.0-E:@PPT@__en_US__UpointDevNg",
+						"type": "text"
+					},
+					{
+						"key": "swkeytemp",
+						"value": "icData",
+						"type": "text"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"operation\": \"configset\",\n    \"uce\": \"true\",\n    \"linkKeys\": [\n        {\n            \"requestType\": \"link\",\n            \"linkName\": \"SPOUSE_LANDING_PAGE_REDIRECT\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "https://api-dv.upncntrsvcs.aws.alight.com/api/template-springboot2/hello",
+					"protocol": "https",
+					"host": [
+						"api-dv",
+						"upncntrsvcs",
+						"aws",
+						"alight",
+						"com"
+					],
+					"path": [
+						"api",
+						"template-springboot2",
+						"hello"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
